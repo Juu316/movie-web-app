@@ -5,7 +5,7 @@ const Header = () => {
     <div>
       <div className="flex gap-2 text-indigo-700">
         <Film />
-        <span className="text-indigo-700 ">Movie Z</span>
+        <span className="text-indigo-700 font-bold">Movie Z</span>
       </div>
     </div>
   )
