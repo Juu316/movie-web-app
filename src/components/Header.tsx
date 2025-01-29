@@ -1,5 +1,6 @@
 import React from 'react'
 import { Film, Search, Sun, Moon } from 'lucide-react';
+import { Button } from "@/components/ui/button"
 
 const Header = () => {
   return (
@@ -9,8 +10,10 @@ const Header = () => {
         <span className="text-indigo-700 font-bold italic ">Movie Z</span>
       </div>
       <div className='flex items-center gap-x-3'>
-        <button> <Search/> </button>
-        <button  > <Sun/> </button>
+      <Button variant="outline"><Search/> </Button>
+      <Button variant="outline"><Sun/> </Button>
+        
+        
       </div>
     </div>
   )
