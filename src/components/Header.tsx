@@ -2,6 +2,7 @@ import React from 'react'
 import { Film, Search, Sun, Moon } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 
+
 const Header = () => {
   return (
     <div className='fixed top-0 inset-x-0 z-20 h-[59px] flex items-center justify-center'>
