@@ -1,3 +1,4 @@
+"use client";
 import React from 'react'
 import { Film, Search, Sun, Moon } from 'lucide-react';
 
@@ -11,8 +12,8 @@ const Header = () => {
         <span className="text-indigo-700 font-bold italic ">Movie Z</span>
       </div>
       <div className='flex items-center gap-x-3'>
-       <button className='block'><Search/> </button>
-       <button className='block'><Sun/> </button>
+       <button className=""><Search/> </button>
+       <button className=""><Sun/> </button>
         
         
       </div>
