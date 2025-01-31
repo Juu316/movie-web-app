@@ -3,6 +3,8 @@ import Image from "next/image";
 import axios from 'axios';
 import React, {useEffect, useState} from "react";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Slider from "@/components/Slider";
 export default function Home() {
   const TMDB_BASE_URL = process.env.TMDB_BASE_URL;
   const TMDB_API_TOKEN = process.env.TMDB_API_TOKEN;
@@ -30,7 +32,7 @@ export default function Home() {
     .then(res => console.log(res.data))
     .catch(err => console.error("error here: ",err));
   }
-  useEffect(getPopularMovie(),[]);
+ 
   // const getMovieData = () => {
     
   // //   try {
@@ -51,6 +53,10 @@ export default function Home() {
     
   // },[]);
   return (
+    <>
     <Header/>
+    <Slider/>
+    <Footer/>
+    </>
   );
 }
