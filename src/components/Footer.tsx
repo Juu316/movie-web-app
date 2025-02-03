@@ -1,14 +1,15 @@
 import React from "react";
 import { Film, Mail, Phone } from "lucide-react";
+import Link from "next/link";
 const Footer = () => {
   return (
     <footer className="w-full bg-indigo-700 py-10 px-5 text-sm text-[#fafafa]">
       <div className="mx-auto flex flex-col justify-between gap-y-7 lg:flex-row max-w-screen-xl">
         <div className="space-y-3">
-          <a className="flex items-center gap-x-2" href="/">
+          <Link className="flex items-center gap-x-2" href="/">
             <Film width={20} height={20}/>
             <h4 className="italic font-bold">Movie Z</h4>
-          </a>
+          </Link>
           <p>© 2024 Movie Z. All Rights Reserved.</p>
         </div>
 

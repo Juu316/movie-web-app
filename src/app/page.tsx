@@ -9,13 +9,7 @@ export default function Home() {
   const TMDB_BASE_URL = process.env.TMDB_BASE_URL;
   const TMDB_API_TOKEN = process.env.TMDB_API_TOKEN;
   const TMDB_IMAGE_SERVICE_URL=process.env.TMDB_IMAGE_SERVICE_URL ;
-  // const options = {
-  //   method: 'GET',
-  //   headers: {
-  //     accept: 'application/json',
-  //     Authorization: `Bearer ${TMDB_API_TOKEN}`
-  //   }
-  // };
+  const TMDB_API_KEY = process.env.TMDB_API_KEY ;
   
   function getPopularMovie(){
     const options = {
@@ -32,9 +26,17 @@ export default function Home() {
     .then(res => console.log(res.data))
     .catch(err => console.error("error here: ",err));
   }
- 
+  const url = `${TMDB_BASE_URL}/movie/550?api_key=${TMDB_API_KEY}`;
+
+  fetch(url)
+  .then(response => response.json()) // Parse the JSON response
+  .then(data => {
+    console.log(data.results); // Display the list of popular movies
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
   // const getMovieData = () => {
-    
   // //   try {
   // //     const response = await axios.get(
   // //       `${TMDB_BASE_URL}/movie/`,
@@ -50,8 +52,8 @@ export default function Home() {
   //   .catch(err => console.error(err));} catch(error){
   //     console.log("Error happened bro:", error)
   //   }
-    
   // },[]);
+
   return (
     <>
     <Header/>
