@@ -51,7 +51,7 @@ const Slider = () => {
           // onMouseLeave={plugin.current.reset}
           >
           <CarouselContent>
-            {Array.from({ length: 5 }).map((_, index) => (
+            {shows.results.map((_, index) => (
               <CarouselItem key={index}>
                 <div className="p-1">
                   <Card>
