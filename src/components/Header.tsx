@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Film, Search, Sun, Moon, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+//import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 const Header = () => {
@@ -14,11 +14,12 @@ const Header = () => {
   const { setTheme, theme } = useTheme();
   const [search, setSearch] = useState("");
   
-  // const handleChange = (event) => {
-  //   setSearch(event.target.value);
-  // };
+  
+  const handleSearch = (event:string) => {
+     setSearch(event.target.value);
+  };
 
-
+console.log("Search value, i guess", search);
   // const response = axios.get(
   //   `${TMDB_BASE_URL}/search/movie?query=${moviesSearch}&api_key=${TMDB_API_KEY}&language=en-US&page=1`,
   //   {
@@ -49,7 +50,8 @@ const Header = () => {
             <input
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-[38px]"
               placeholder="Search..."
-            ></input>
+              onClick={handleSearch}
+            />
           </div>
         </div>
         <div className="flex items-center gap-x-3">

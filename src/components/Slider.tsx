@@ -15,20 +15,21 @@ const Slider = () => {
   const TMDB_BASE_URL = "https://api.themoviedb.org/3";
   const [isLoading, setIsLoading] = useState(false);
   const [shows, setShows] = useState([]);
-
+ const [nowPlaying, setNowPlaying]= useState([]);
   const fetchMovie = async () => {
     try {
       setIsLoading(true);
       await fetch(
-        `${TMDB_BASE_URL}/discover/movie?api_key=6eabc9eb3fe4172545bd74326fd002f8`
+        `${TMDB_BASE_URL}/movie/now_playing?language=en-US&page=1`
       )
         .then((res) => res.json())
         .then((json) => {
-          setShows(json);
-          console.log("Shows:", json);
+          setNowPlaying(json);
+          console.log("Now playing:", json);
         });
       setIsLoading(false);
     } catch (err) {
+      setIsLoading(false);
       console.log(err);
     }
   };
@@ -44,14 +45,14 @@ const Slider = () => {
   return (
     <>
       <div className="relative mt-[59px] lg:mt-[83px] w-screen ">
-        <Carousel
+        {/* <Carousel
           plugins={[plugin.current]}
           className="w-full max-w-xs"
           // onMouseEnter={plugin.current.stop}
           // onMouseLeave={plugin.current.reset}
           >
-          <CarouselContent>
-            {shows.results.map((_, index) => (
+           <CarouselContent>
+            {nowPlaying.map((_, index) => (
               <CarouselItem key={index}>
                 <div className="p-1">
                   <Card>
@@ -67,7 +68,7 @@ const Slider = () => {
           </CarouselContent>
           <CarouselPrevious />
           <CarouselNext />
-        </Carousel>
+        </Carousel>  */}
         {/* <div className="overflow-hidden">
           <div className="flex -ml-4"></div>
         </div> */}
