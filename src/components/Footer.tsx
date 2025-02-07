@@ -36,10 +36,10 @@ const Footer = () => {
           <div className="space-y-3">
             <h4>Follow us</h4>
             <div className="flex flex-col gap-3 lg:flex-row">
-                <span className="font-medium">Facebook</span>
-                <span className="font-medium">Instagram</span>
-                <span className="font-medium">Twitter</span>
-                <span className="font-medium">Youtube</span>
+                <Link href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" className="font-medium">Facebook</Link>
+                <Link href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" className="font-medium">Instagram</Link>
+                <Link href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" className="font-medium">Twitter</Link>
+                <Link href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" className="font-medium">Youtube</Link>
             </div>
           </div>
         </div>

@@ -15,7 +15,7 @@ const Header = () => {
   const [search, setSearch] = useState("");
   
   
-  const handleSearch = (event:string) => {
+  const handleSearch = (event:any) => {
      setSearch(event.target.value);
   };
 
