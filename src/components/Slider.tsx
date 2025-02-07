@@ -76,13 +76,13 @@ const Slider = () => {
       <Carousel
               plugins={[plugin.current]}
               className="w-full max-w-xs"
-              
+             
               // onMouseEnter={plugin.current.stop}
               // onMouseLeave={plugin.current.reset}
             ><CarouselContent>
         {nowPlaying.map((data, index) => {
           return (
-            <>
+            
             
               
                 <CarouselItem key={index}>
@@ -100,7 +100,7 @@ const Slider = () => {
                 </CarouselItem>
               
               
-              </>
+              
           );
         })}
         <CarouselPrevious />
