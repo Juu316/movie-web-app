@@ -3,7 +3,7 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight} from "lucide-react";
-const token = process.env.TMDB_API_TOKEN;
+const token:string = process.env.TMDB_API_TOKEN;
 const MovieList = () => {
   const [movieData, setMovieData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ const MovieList = () => {
           headers: {
             accept: "application/json",
             Authorization:
-              `Bearer ${token}`,
+              `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZWFiYzllYjNmZTQxNzI1NDViZDc0MzI2ZmQwMDJmOCIsIm5iZiI6MTczODAzNzc1NC42MzY5OTk4LCJzdWIiOiI2Nzk4NTlmYTM3MmNiMjBjZjgyMzg0NGEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WBQLl0E0QJ4_D0cK0QpkcTuzIiyGY7jX3c7QUPBpU-s`,
           },
         }
       );

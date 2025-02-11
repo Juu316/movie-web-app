@@ -6,10 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 const Header = () => {
-  const TMDB_BASE_URL = process.env.TMDB_BASE_URL;
-  const TMDB_API_TOKEN = process.env.TMDB_API_TOKEN;
-  const TMDB_IMAGE_SERVICE_URL = process.env.TMDB_IMAGE_SERVICE_URL;
-  const TMDB_API_KEY = process.env.TMDB_API_KEY;
+ 
   const [isLoading, setIsLoading] = useState(false);
   const { setTheme, theme } = useTheme();
   const [search, setSearch] = useState("");
@@ -19,7 +16,7 @@ const Header = () => {
      setSearch(event.target.value);
   };
 
-console.log("Search value, i guess", search);
+//console.log("Search value, i guess", search);
   // const response = axios.get(
   //   `${TMDB_BASE_URL}/search/movie?query=${moviesSearch}&api_key=${TMDB_API_KEY}&language=en-US&page=1`,
   //   {
