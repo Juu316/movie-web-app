@@ -33,12 +33,12 @@ const Popular = () => {
     }, []);
   
     useEffect(() => {
-      console.log(popularMovieData); // Logs updated state
+      console.log("Popular:",popularMovieData); // Logs updated state
     }, [popularMovieData]);
 
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mb-5">
       <div className="flex items-center justify-between">
         <h3 className="text-foreground text-2xl font-semibold">Popular</h3>
         <Link

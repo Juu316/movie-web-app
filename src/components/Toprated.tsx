@@ -32,11 +32,11 @@ const [movieData, setMovieData] = useState([]);
   }, []);
 
   useEffect(() => {
-    console.log(movieData); // Logs updated state
+    console.log("Top rated:",movieData); // Logs updated state
   }, [movieData]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mb-5">
       <div className="flex items-center justify-between">
         <h3 className="text-foreground text-2xl font-semibold">Top Rated</h3>
         <Link
