@@ -5,10 +5,10 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 const token: string = process.env.TMDB_API_TOKEN;
 const MovieList = () => {
-  const [movieData, setMovieData] = useState([]);
+  const [movieData, setMovieData] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+const [config, setConfig]=useState([]);
   const fetchData = async () => {
     try {
       const res = await axios.get(
@@ -26,9 +26,23 @@ const MovieList = () => {
       setErrorMessage(err);
     }
   };
+const fetchConfig = async ()=>{
+  try{
+    const res = await axios.get("https://api.themoviedb.org/3/configuration",{
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZWFiYzllYjNmZTQxNzI1NDViZDc0MzI2ZmQwMDJmOCIsIm5iZiI6MTczODAzNzc1NC42MzY5OTk4LCJzdWIiOiI2Nzk4NTlmYTM3MmNiMjBjZjgyMzg0NGEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WBQLl0E0QJ4_D0cK0QpkcTuzIiyGY7jX3c7QUPBpU-s`,
+      },
+      
+    })
+    console.log("data:", res.data);
+    setConfig(res.data);
+  }catch(error){console.log("Error:",error)}
+}
 
   useEffect(() => {
     fetchData();
+    fetchConfig();
   }, []);
 
   useEffect(() => {

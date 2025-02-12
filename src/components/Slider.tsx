@@ -18,7 +18,7 @@ import Image from "next/image";
 const Slider = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
+  const [nowPlayingMovies, setNowPlayingMovies] = useState<Movie[]>([]);
 
   const API_KEY =
     "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZWFiYzllYjNmZTQxNzI1NDViZDc0MzI2ZmQwMDJmOCIsIm5iZiI6MTczODAzNzc1NC42MzY5OTk4LCJzdWIiOiI2Nzk4NTlmYTM3MmNiMjBjZjgyMzg0NGEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WBQLl0E0QJ4_D0cK0QpkcTuzIiyGY7jX3c7QUPBpU-s"; // Replace with your actual API key
@@ -26,7 +26,7 @@ const Slider = () => {
   const fetchMovies = async () => {
     try {
       const response = await axios.get(
-        "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
+        "http://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
         {
           headers: {
             accept: "application/json",
@@ -81,15 +81,13 @@ const Slider = () => {
           <CarouselContent>
             {nowPlayingMovies.map((movie) => (
               <CarouselItem key={movie.id} className="w-full h-[603px]">
-                <div  className="w-full h-[603px]">
-                  <Image
-                    alt={"alt"}
-                    src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
-                    fill
-                    objectFit="cover"
-                    className="-z-10"
-                  />
-                </div>
+                <Image
+                  alt={"alt"}
+                  src={`https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`}
+                  fill
+                  objectFit="cover"
+                  className="-z-10"
+                />
 
                 {movie.title}
               </CarouselItem>
