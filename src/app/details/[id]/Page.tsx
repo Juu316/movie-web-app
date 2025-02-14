@@ -1,13 +1,12 @@
 "use client";
-import React from 'react';
-import { useRouter, usePathname } from 'next/router';
+import React from "react";
+import { useParams } from "next/navigation";
+// import { useEffect } from "react";
 const Page = () => {
-  
-  return (
-    <div>
-      details page
-    </div>
-  )
-}
+  const params = useParams();
 
-export default Page
+  console.log(params.id);
+  return <div>div {params.id}</div>;
+};
+
+export default Page;

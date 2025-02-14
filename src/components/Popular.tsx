@@ -56,7 +56,7 @@ const Popular = () => {
           popularMovieData.map((movie) => (
             <div
               key={movie.id}
-              className="group w-[157.5px] overflow-hidden rounded-lg bg-secondary space-y-1 lg:w-[230px]">
+              className="group w-[157.5px] overflow-hidden rounded-lg bg-secondary space-y-1 lg:w-[230px] cursor-pointer">
               <Image
                 alt={movie.title}
                 src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
