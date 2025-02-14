@@ -1,12 +1,15 @@
 "use client";
 import React from "react";
 import { useParams } from "next/navigation";
-// import { useEffect } from "react";
 const Page = () => {
-  const params = useParams();
+  // const params = useParams();
 
-  console.log(params.id);
-  return <div>div {params.id}</div>;
+  // console.log(params.id);
+  return (
+    <>
+      <div className="mt-[59px]">text</div>
+    </>
+  );
 };
 
 export default Page;

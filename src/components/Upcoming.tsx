@@ -5,16 +5,14 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-
 const token: string = process.env.TMDB_API_TOKEN;
 
-
-const MovieList = () => {
+const Upcoming = () => {
   const [movieData, setMovieData] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [config, setConfig] = useState([]);
-  const {push} = useRouter();
+  // const [config, setConfig] = useState([]);
+  const { push } = useRouter();
 
   const fetchData = async () => {
     try {
@@ -33,27 +31,27 @@ const MovieList = () => {
       setErrorMessage(err);
     }
   };
-  const fetchConfig = async () => {
-    try {
-      const res = await axios.get(
-        "https://api.themoviedb.org/3/configuration",
-        {
-          headers: {
-            accept: "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZWFiYzllYjNmZTQxNzI1NDViZDc0MzI2ZmQwMDJmOCIsIm5iZiI6MTczODAzNzc1NC42MzY5OTk4LCJzdWIiOiI2Nzk4NTlmYTM3MmNiMjBjZjgyMzg0NGEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WBQLl0E0QJ4_D0cK0QpkcTuzIiyGY7jX3c7QUPBpU-s`,
-          },
-        }
-      );
-      console.log("data:", res.data);
-      setConfig(res.data);
-    } catch (error) {
-      console.log("Error:", error);
-    }
-  };
+  // const fetchConfig = async () => {
+  //   try {
+  //     const res = await axios.get(
+  //       "https://api.themoviedb.org/3/configuration",
+  //       {
+  //         headers: {
+  //           accept: "application/json",
+  //           Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZWFiYzllYjNmZTQxNzI1NDViZDc0MzI2ZmQwMDJmOCIsIm5iZiI6MTczODAzNzc1NC42MzY5OTk4LCJzdWIiOiI2Nzk4NTlmYTM3MmNiMjBjZjgyMzg0NGEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WBQLl0E0QJ4_D0cK0QpkcTuzIiyGY7jX3c7QUPBpU-s`,
+  //         },
+  //       }
+  //     );
+  //     console.log("data:", res.data);
+  //     setConfig(res.data);
+  //   } catch (error) {
+  //     console.log("Error:", error);
+  //   }
+  // };
 
   useEffect(() => {
     fetchData();
-    fetchConfig();
+    
   }, []);
 
   useEffect(() => {
@@ -64,11 +62,13 @@ const MovieList = () => {
     <div className="space-y-8 mb-5">
       <div className="flex items-center justify-between">
         <h3 className="text-foreground text-2xl font-semibold">Upcoming</h3>
-        <Link
-          className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-primary underline-offset-4 hover:underline h-9 px-4 py-2"
-          href="/upcoming">
+        <div
+          className="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-primary underline-offset-4 hover:underline h-9 px-4 py-2"
+          onClick={() => {
+            push(`/category/upcoming`);
+          }}>
           &quot;See more&quot; <ArrowRight />
-        </Link>
+        </div>
       </div>
       <div className="flex flex-wrap gap-5 lg:gap-8">
         {loading ? (
@@ -123,4 +123,4 @@ const MovieList = () => {
   );
 };
 
-export default MovieList;
+export default Upcoming;
