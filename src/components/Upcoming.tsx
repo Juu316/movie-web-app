@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const token: string = process.env.TMDB_API_TOKEN;
+const token = process.env.TMDB_API_TOKEN;
 
 const Upcoming = () => {
-  const [movieData, setMovieData] = useState<Movie[]>([]);
+  const [movieData, setMovieData] = useState<
+    { id: number; title: string; poster_path: string; vote_average: number }[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   // const [config, setConfig] = useState([]);
@@ -16,42 +17,26 @@ const Upcoming = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(
         "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
         {
           headers: {
             accept: "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZWFiYzllYjNmZTQxNzI1NDViZDc0MzI2ZmQwMDJmOCIsIm5iZiI6MTczODAzNzc1NC42MzY5OTk4LCJzdWIiOiI2Nzk4NTlmYTM3MmNiMjBjZjgyMzg0NGEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WBQLl0E0QJ4_D0cK0QpkcTuzIiyGY7jX3c7QUPBpU-s`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       setMovieData(res.data.results.slice(0, 10)); // results contains the movie list
-    } catch (err) {
-      console.error(err);
-      setErrorMessage(err);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("error");
     }
   };
-  // const fetchConfig = async () => {
-  //   try {
-  //     const res = await axios.get(
-  //       "https://api.themoviedb.org/3/configuration",
-  //       {
-  //         headers: {
-  //           accept: "application/json",
-  //           Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZWFiYzllYjNmZTQxNzI1NDViZDc0MzI2ZmQwMDJmOCIsIm5iZiI6MTczODAzNzc1NC42MzY5OTk4LCJzdWIiOiI2Nzk4NTlmYTM3MmNiMjBjZjgyMzg0NGEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WBQLl0E0QJ4_D0cK0QpkcTuzIiyGY7jX3c7QUPBpU-s`,
-  //         },
-  //       }
-  //     );
-  //     console.log("data:", res.data);
-  //     setConfig(res.data);
-  //   } catch (error) {
-  //     console.log("Error:", error);
-  //   }
-  // };
 
   useEffect(() => {
     fetchData();
-    
   }, []);
 
   useEffect(() => {
@@ -59,7 +44,7 @@ const Upcoming = () => {
   }, [movieData]);
 
   return (
-    <div className="space-y-8 mb-5">
+    <div className="space-y-8 mb-5 mt-7">
       <div className="flex items-center justify-between">
         <h3 className="text-foreground text-2xl font-semibold">Upcoming</h3>
         <div

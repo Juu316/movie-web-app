@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 const Toprated = () => {
-  const [movieData, setMovieData] = useState<Movie[]>([]);
+  const [movieData, setMovieData] = useState<
+    { id: number; title: string; poster_path: string; vote_average: number }[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { push } = useRouter();
   const fetchData = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(
         "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1",
         {
@@ -21,9 +23,10 @@ const Toprated = () => {
         }
       );
       setMovieData(res.data.results.slice(0, 10)); // results contains the movie list
-    } catch (err) {
-      console.error(err);
-      setErrorMessage(err);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Fetch error");
     }
   };
 

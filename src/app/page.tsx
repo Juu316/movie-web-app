@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Movies from "@/components/Movies";
+// import React, { useEffect, useState } from "react";
+// import Movies from "@/components/Movies";
 import Slider from "@/components/Slider";
 import Upcoming from "@/components/Upcoming";
 import Popular from "@/components/Popular";
