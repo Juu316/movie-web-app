@@ -4,11 +4,12 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-const token = process.env.TMDB_API_TOKEN;
+
 const Popular = () => {
   const [popularMovieData, setPopularMovieData] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const token = process.env.TMDB_API_TOKEN;
   const { push } = useRouter();
   const fetchData = async () => {
     try {
@@ -17,7 +18,7 @@ const Popular = () => {
         {
           headers: {
             accept: "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZWFiYzllYjNmZTQxNzI1NDViZDc0MzI2ZmQwMDJmOCIsIm5iZiI6MTczODAzNzc1NC42MzY5OTk4LCJzdWIiOiI2Nzk4NTlmYTM3MmNiMjBjZjgyMzg0NGEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WBQLl0E0QJ4_D0cK0QpkcTuzIiyGY7jX3c7QUPBpU-s`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -30,6 +31,7 @@ const Popular = () => {
 
   useEffect(() => {
     fetchData();
+    console.log("token", token);
   }, []);
 
   useEffect(() => {

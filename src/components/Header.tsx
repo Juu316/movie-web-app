@@ -6,17 +6,15 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 const Header = () => {
- 
   const [isLoading, setIsLoading] = useState(false);
   const { setTheme, theme } = useTheme();
   const [search, setSearch] = useState("");
-  
-  
+
   const handleSearch = (event) => {
-     setSearch(event.target.value);
+    setSearch(event.target.value);
   };
 
-//console.log("Search value, i guess", search);
+  //console.log("Search value, i guess", search);
   // const response = axios.get(
   //   `${TMDB_BASE_URL}/search/movie?query=${moviesSearch}&api_key=${TMDB_API_KEY}&language=en-US&page=1`,
   //   {
@@ -27,10 +25,10 @@ const Header = () => {
   // );
   return (
     <header className="fixed top-0 inset-x-0 z-20 h-[59px] flex items-center justify-center bg-background">
-      <div className="flex items-center justify-between w-full max-w-screen-xl px-5 lg:px-0">
+      <div className="flex items-center justify-between w-full px-5">
         <Link className="flex items-center gap-x-2 text-indigo-700" href="/">
           <Film width={20} height={20} />
-          <h4 className="italic font-bold">Movie Z</h4>
+          <h4 className="italic font-bold">Movie magixx</h4>
         </Link>
         <div className="relative hidden lg:flex items-center gap-x-3">
           <Button className="h-9 " variant="outline">
@@ -53,9 +51,10 @@ const Header = () => {
         </div>
         <div className="flex items-center gap-x-3">
           <div className="lg:hidden">
-            <Button variant="outline"
-              className="w-9 h-9">
-              <Search /></Button> </div>
+            <Button variant="outline" className="w-9 h-9">
+              <Search />
+            </Button>{" "}
+          </div>
 
           {theme === "dark" ? (
             <Button

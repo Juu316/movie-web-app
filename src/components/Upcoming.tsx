@@ -4,15 +4,13 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const token = process.env.TMDB_API_TOKEN;
-
 const Upcoming = () => {
   const [movieData, setMovieData] = useState<
     { id: number; title: string; poster_path: string; vote_average: number }[]
   >([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  // const [config, setConfig] = useState([]);
+  const token = process.env.TMDB_API_TOKEN;
   const { push } = useRouter();
 
   const fetchData = async () => {
@@ -44,7 +42,7 @@ const Upcoming = () => {
   }, [movieData]);
 
   return (
-    <div className="space-y-8 mb-5 mt-7">
+    <div className="w-full mx-4 space-y-8 mb-5 mt-7">
       <div className="flex items-center justify-between">
         <h3 className="text-foreground text-2xl font-semibold">Upcoming</h3>
         <div
