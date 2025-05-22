@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -11,7 +10,7 @@ const Page = () => {
   const params = useParams();
   const movieId = params.id;
   const [movie, setMovie] = useState<Movie | null>(null);
-
+  const [similarMovie, setSimilarMovie] = useState<Movie | null>(null);
   const [trailer, setTrailer] = useState<Trailer[]>([]);
 
   useEffect(() => {
@@ -48,7 +47,23 @@ const Page = () => {
         console.error(err);
       }
     };
-
+    const fetchSimilar = async () => {
+      try {
+        const res = await axios.get(
+          `https://api.themoviedb.org/3/movie/${movieId}/similar?language=en-US&page=1`,
+          {
+            headers: {
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setSimilarMovie(res.data.results);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSimilar();
     fetchTrailer();
     fetchMovie();
   }, [movieId, token]);
@@ -58,10 +73,10 @@ const Page = () => {
   const trailerLink = trailer.find(
     (vid: Trailer) => vid.site === "YouTube" && vid.type === "Trailer"
   );
-  console.log(movie);
+  console.log(similarMovie);
   return (
     <div className="  bg-gray-900 text-white mt-[59px] px-6 py-10 ">
-      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10">
+      <div className="max-w-screen-xl mx-auto flex flex-col lg:flex-row gap-10">
         {/* Poster */}
         <div className="flex-shrink-0 mx-auto lg:mx-0">
           <Image
@@ -73,7 +88,6 @@ const Page = () => {
           />
         </div>
 
-        {/* Details */}
         <div className="flex-1 space-y-4">
           <h1 className="text-4xl font-bold">{movie.title}</h1>
           <p className="text-gray-300 text-lg leading-relaxed">
@@ -82,22 +96,18 @@ const Page = () => {
 
           <div className="text-sm text-gray-400">
             <p>
-              <span className="font-semibold text-white">
-                Release Date:
-              </span>{" "}
+              <span className="font-semibold text-white">Release Date:</span>{" "}
               {movie.release_date}
             </p>
             <p>
-              <span className="font-semibold text-white">
-                Runtime:
-              </span>{" "}
+              <span className="font-semibold text-white">Runtime:</span>{" "}
               {movie.runtime} min
             </p>
             <p>
-              <span className="font-semibold text-white">
-                Genres:
-              </span>{" "}
-              {movie.genres?.map((g: any) => g.name).join(", ")}
+              <span className="font-semibold text-white">Genres:</span>{" "}
+              {movie.genres
+                ?.map((g: { id: number; name: string }) => g.name)
+                .join(", ")}
             </p>
           </div>
 
@@ -119,9 +129,7 @@ const Page = () => {
                 ▶ Watch Trailer
               </a>
             ) : (
-              <p className="text-gray-400">
-                No trailer available
-              </p>
+              <p className="text-gray-400">No trailer available</p>
             )}
           </div>
         </div>
