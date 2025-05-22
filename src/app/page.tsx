@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
       <Slider />
-      <div className="min-h-screen max-w-screen-xl w-full  mx-auto py-8 lg:py-13 space-y-8 lg:space-y-13">
+      <div className=" max-w-screen-xl w-full  mx-auto py-8 lg:py-13 space-y-8 lg:space-y-13">
         <Upcoming />
         <Popular />
         <Toprated />

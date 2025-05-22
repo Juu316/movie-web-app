@@ -11,7 +11,7 @@ const Page = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const 
+
   const params = useParams();
   console.log("Params", params);
 

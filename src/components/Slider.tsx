@@ -3,54 +3,41 @@ import axios from "axios";
 import "keen-slider/keen-slider.min.css";
 import Image from "next/image";
 import { useKeenSlider } from "keen-slider/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Rating from "./ui/Rating";
 const Slider = () => {
   const [movieData, setMovieData] = useState<
-    { id: number; title: string; backdrop_path: string; vote_average: number }[]
+    {
+      id: number;
+      title: string;
+      backdrop_path: string;
+      vote_average: number;
+      poster_path: string;
+      overview: string;
+    }[]
   >([]);
-  // const [loading, setLoading] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState("");
+
   const token = process.env.TMDB_API_TOKEN;
   const { push } = useRouter();
-  const [sliderRef] = useKeenSlider<HTMLDivElement>(
-    {
-      loop: true,
-    },
-    [
-      (slider) => {
-        let timeout: ReturnType<typeof setTimeout>;
-        let mouseOver = false;
-        function clearNextTimeout() {
-          clearTimeout(timeout);
-        }
-        function nextTimeout() {
-          clearTimeout(timeout);
-          if (mouseOver) return;
-          timeout = setTimeout(() => {
-            slider.next();
-          }, 2000);
-        }
-        slider.on("created", () => {
-          slider.container.addEventListener("mouseover", () => {
-            mouseOver = true;
-            clearNextTimeout();
-          });
-          slider.container.addEventListener("mouseout", () => {
-            mouseOver = false;
-            nextTimeout();
-          });
-          nextTimeout();
-        });
-        slider.on("dragStarted", clearNextTimeout);
-        slider.on("animationEnded", nextTimeout);
-        slider.on("updated", nextTimeout);
-      },
-    ]
+  const [currentSlide, setCurrentSlide] = React.useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const SliderSkeleton = () => (
+    <div className="w-full h-[80vh] relative flex items-center justify-center bg-gray-200 dark:bg-gray-800 animate-pulse rounded-lg overflow-hidden">
+      <div className="absolute top-12 left-6 bg-gray-300 dark:bg-gray-700 z-20 rounded-lg flex gap-6 shadow-lg p-2 w-[430px] h-[140px]">
+        <div className="bg-gray-400 dark:bg-gray-600 rounded-md w-[80px] h-[120px]" />
+        <div className="flex flex-col gap-2 w-[330px]">
+          <div className="h-6 bg-gray-400 dark:bg-gray-600 rounded w-3/4" />
+          <div className="h-4 bg-gray-400 dark:bg-gray-600 rounded w-1/2" />
+          <div className="h-3 bg-gray-400 dark:bg-gray-600 rounded w-full" />
+          <div className="h-3 bg-gray-400 dark:bg-gray-600 rounded w-5/6" />
+        </div>
+      </div>
+    </div>
   );
-  const fetchData = async () => {
+  const fetchNow = async () => {
     try {
-      // setLoading(true);
       const res = await axios.get(
         "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
         {
@@ -60,70 +47,154 @@ const Slider = () => {
           },
         }
       );
-      setMovieData(res.data.results.slice(0, 10)); // results contains the movie list
-      // setLoading(false);
+
+      setMovieData(res.data.results.slice(0, 10));
+      setImageLoaded(true);
+      console.log("NOW:", movieData);
     } catch (error) {
       console.error(error);
-      // setErrorMessage("error");
     }
   };
-
   useEffect(() => {
-    fetchData();
+    fetchNow();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => {
-    console.log("MOVIE DATA:", movieData);
-  }, [setMovieData, movieData]);
-  return (
-    <>
-      <div className="mt-[59px] w-full ">
-        <div ref={sliderRef} className="w-full keen-slider">
-          {movieData.map((movie) => (
+  const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
+    initial: 0,
+    slideChanged(slider) {
+      setCurrentSlide(slider.track.details.rel);
+    },
+    created() {
+      setLoaded(true);
+    },
+  });
+  if (!imageLoaded) {
+    // Show 1 skeleton for each slide you expect to load
+    return (
+      <div className="navigation-wrapper mt-[59px]">
+        <div className="keen-slider">
+          {Array.from({ length: 1 }).map((_, idx) => (
             <div
-              key={movie.id}
-              className="keen-slider__slide w-full overflow-hidden rounded-lg bg-secondary space-y-1   cursor-pointer "
-              onClick={() => push(`/details/${movie.id}`)}>
-              <Image
-                alt={movie.title}
-                src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
-                objectFit="contain"
-                fill
-              />
-
-              {/* <div className="p-2">
-                    <div className="flex items-center gap-x-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="#fde047"
-                        stroke="#fde047"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="lucide lucide-star">
-                        <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
-                      </svg>
-                      <div className="font-medium">
-                        <span className="text-foreground text-sm">
-                          {movie.vote_average.toFixed(1)}
-                        </span>
-                        <span className="text-muted-foreground text-xs">
-                          /10
-                        </span>
-                      </div>
-                    </div>
-                    <h4 className="h-14 overflow-hidden text-ellipsis line-clamp-2 text-lg text-foreground">
-                      {movie.title}
-                    </h4>
-                  </div> */}
+              key={idx}
+              className="keen-slider__slide flex justify-center bg-inherit">
+              <SliderSkeleton />
             </div>
           ))}
         </div>
       </div>
+    );
+  }
+  return (
+    <>
+      <div className="navigation-wrapper mt-[59px] ">
+        <div ref={sliderRef} className="keen-slider">
+          {movieData.map((movie) => (
+            <div
+              key={movie.id}
+              className="keen-slider__slide flex justify-center bg-inherit">
+              <div className="relative w-full h-[80vh] ">
+                <Image
+                  alt={movie.title}
+                  src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+                  fill
+                  className="object-cover opacity-75 z-10"
+                  priority
+                />
+                <div className="absolute top-12 left-6 bg-gray-800  z-20 rounded-lg flex gap-6  shadow-lg p-2">
+                  <div
+                    className=""
+                    // style={{ height: "150px", aspectRatio: "2/3" }}
+                  >
+                    <Image
+                      alt={movie.title}
+                      src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+                      className="object-cover rounded-md cursor-pointer"
+                      width={80}
+                      height={120}
+                      onClick={() => push(`/details/${movie.id}`)}
+                    />
+                  </div>
+                  <div className="w-[330px]">
+                    <div
+                      onClick={() => push(`/details/${movie.id}`)}
+                      className="font-semibold text-[1.5rem] cursor-pointer">
+                      {movie.title}
+                    </div>
+                    <Rating movie={{ vote_average: movie.vote_average }} />
+                    <div className=" box-border break-words overflow-hidden text-xs line-clamp-3">
+                      {movie.overview}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {loaded && instanceRef.current && (
+          <>
+            <Arrow
+              left
+              onClick={(e) =>
+                e.stopPropagation() || instanceRef.current?.prev()
+              }
+              disabled={currentSlide === 0}
+            />
+
+            <Arrow
+              onClick={(e) =>
+                e.stopPropagation() || instanceRef.current?.next()
+              }
+              disabled={
+                currentSlide ===
+                instanceRef.current.track.details.slides.length - 1
+              }
+            />
+          </>
+        )}
+      </div>
+      {loaded && instanceRef.current && (
+        <div className="dots">
+          {[
+            ...Array(instanceRef.current.track.details.slides.length).keys(),
+          ].map((idx) => {
+            return (
+              <button
+                key={idx}
+                onClick={() => {
+                  instanceRef.current?.moveToIdx(idx);
+                }}
+                className={
+                  "dot" + (currentSlide === idx ? " active" : "")
+                }></button>
+            );
+          })}
+        </div>
+      )}
     </>
   );
 };
-
+function Arrow(props: {
+  disabled: boolean;
+  left?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onClick: (e: any) => void;
+}) {
+  const disabled = props.disabled ? " arrow--disabled" : "";
+  return (
+    <svg
+      onClick={props.onClick}
+      className={`arrow ${
+        props.left ? "arrow--left" : "arrow--right"
+      } ${disabled}`}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24">
+      {props.left && (
+        <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
+      )}
+      {!props.left && (
+        <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" />
+      )}
+    </svg>
+  );
+}
 export default Slider;

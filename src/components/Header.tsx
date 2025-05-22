@@ -10,19 +10,13 @@ const Header = () => {
   const { setTheme, theme } = useTheme();
   const [search, setSearch] = useState("");
 
-  const handleSearch = (event) => {
+  interface SearchEvent extends React.MouseEvent<HTMLInputElement> {
+    target: HTMLInputElement;
+  }
+
+  const handleSearch = (event: SearchEvent) => {
     setSearch(event.target.value);
   };
-
-  //console.log("Search value, i guess", search);
-  // const response = axios.get(
-  //   `${TMDB_BASE_URL}/search/movie?query=${moviesSearch}&api_key=${TMDB_API_KEY}&language=en-US&page=1`,
-  //   {
-  //     headers: {
-  //       Authorization: `Bearer ${TMDB_API_TOKEN}`,
-  //     },
-  //   }
-  // );
   return (
     <header className="fixed top-0 inset-x-0 z-20 h-[59px] flex items-center justify-center bg-background">
       <div className="flex items-center justify-between w-full px-5">

@@ -2,8 +2,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import Rating from "./ui/Rating";
+import { Movie } from "@/types/Movie";
+const SkeletonCard = () => (
+  <div className="animate-pulse w-[157.5px] lg:w-[230px] rounded-lg bg-secondary overflow-hidden space-y-1">
+    <div className="bg-gray-300 dark:bg-gray-700 w-full h-[240px] lg:h-[340px]" />
+    <div className="p-2 space-y-2">
+      <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2" />
+      <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-3/4" />
+    </div>
+  </div>
+);
 
 const Popular = () => {
   const [popularMovieData, setPopularMovieData] = useState<Movie[]>([]);
@@ -11,7 +21,9 @@ const Popular = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const token = process.env.TMDB_API_TOKEN;
   const { push } = useRouter();
-  const fetchData = async () => {
+
+  const fetchPopular = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
@@ -22,21 +34,18 @@ const Popular = () => {
           },
         }
       );
-      setPopularMovieData(res.data.results.slice(0, 10)); // results contains the movie list
+      setPopularMovieData(res.data.results.slice(0, 10));
     } catch (err) {
       console.error(err);
-      setErrorMessage(err);
+      setErrorMessage("Failed to fetch popular movies.");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
-    console.log("token", token);
+    fetchPopular();
   }, []);
-
-  useEffect(() => {
-    console.log("Popular:", popularMovieData); // Logs updated state
-  }, [popularMovieData]);
 
   return (
     <div className="space-y-8 mb-5">
@@ -52,7 +61,7 @@ const Popular = () => {
       </div>
       <div className="flex flex-wrap gap-5 lg:gap-8">
         {loading ? (
-          <p>Loading</p>
+          Array.from({ length: 10 }).map((_, idx) => <SkeletonCard key={idx} />)
         ) : errorMessage ? (
           <p>{errorMessage}</p>
         ) : (
@@ -68,29 +77,8 @@ const Popular = () => {
                 height={340}
                 objectFit="cover"
               />
-
               <div className="p-2">
-                <div className="flex items-center gap-x-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="#fde047"
-                    stroke="#fde047"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-star">
-                    <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
-                  </svg>
-                  <div className="font-medium">
-                    <span className="text-foreground text-sm">
-                      {movie.vote_average.toFixed(1)}
-                    </span>
-                    <span className="text-muted-foreground text-xs">/10</span>
-                  </div>
-                </div>
+                <Rating movie={{ vote_average: movie.vote_average }} />
                 <h4 className="h-14 overflow-hidden text-ellipsis line-clamp-2 text-lg text-foreground">
                   {movie.title}
                 </h4>
