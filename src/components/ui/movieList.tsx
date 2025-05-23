@@ -12,6 +12,7 @@ interface MovieListProps {
   loading: boolean;
   errorMessage: string;
   categoryRoute: string;
+  showSeeMore?: boolean;
 }
 
 const MovieList: React.FC<MovieListProps> = ({
@@ -20,28 +21,31 @@ const MovieList: React.FC<MovieListProps> = ({
   loading,
   errorMessage,
   categoryRoute,
+  showSeeMore = true,
 }) => {
   const { push } = useRouter();
 
   return (
     <div className="space-y-6 mb-5">
-      <div className="flex items-center justify-between">
-        <h3 className="text-foreground text-2xl font-semibold">{title}</h3>
-        <div
-          className="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-primary underline-offset-4 hover:underline h-9 px-4 py-2"
-          onClick={() => {
-            push(categoryRoute);
-          }}>
-          &quot;See more&quot; <ArrowRight />
-        </div>
+      <div className="flex items-center justify-between ml-4">
+        <h3 className="text-foreground text-2xl font-semibold ">{title}</h3>
+        {showSeeMore && (
+          <div
+            className="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-primary underline-offset-4 hover:underline h-9 px-4 py-2"
+            onClick={() => {
+              push(categoryRoute);
+            }}>
+            &quot;See more&quot; <ArrowRight />
+          </div>
+        )}
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mx-4">
         {loading ? (
           <p>Loading...</p>
         ) : errorMessage ? (
           <p>{errorMessage}</p>
         ) : (
-          movies.map((movie) => (
+          (movies || []).map((movie) => (
             <div
               key={movie.id}
               className="group relative cursor-pointer overflow-hidden rounded-lg bg-secondary"

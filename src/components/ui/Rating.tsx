@@ -25,7 +25,9 @@ const Rating: React.FC<RatingProps> = ({ movie }) => {
         </svg>
         <div className="font-medium">
           <span className="text-foreground text-sm">
-            {movie.vote_average.toFixed(1)}
+            {typeof movie.vote_average === "number"
+              ? movie.vote_average.toFixed(1)
+              : "N/A"}
           </span>
           <span className="text-muted-foreground text-xs">/10</span>
         </div>

@@ -41,7 +41,7 @@ const Toprated = () => {
       movies={movieData}
       loading={loading}
       errorMessage={errorMessage}
-      categoryRoute="/category/toprated"
+      categoryRoute="/category/top_rated"
     />
   );
 };

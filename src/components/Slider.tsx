@@ -45,7 +45,6 @@ const Slider = () => {
           },
         }
       );
-
       setMovieData(res.data.results.slice(0, 10));
       setImageLoaded(true);
     } catch (error) {
@@ -66,7 +65,6 @@ const Slider = () => {
     },
   });
   if (!imageLoaded) {
-    // Show 1 skeleton for each slide you expect to load
     return (
       <div className="navigation-wrapper mt-[59px]">
         <div className="keen-slider">
@@ -85,53 +83,62 @@ const Slider = () => {
   return (
     <>
       <div className="navigation-wrapper mt-[59px] ">
-        <div ref={sliderRef} className="keen-slider">
-          {movieData &&
-            movieData.map((movie: Movie) => (
-              <div
-                key={movie.id}
-                className="keen-slider__slide flex justify-center bg-inherit">
-                <div className="relative w-full h-[80vh] ">
-                  <Image
-                    alt={movie.title}
-                    src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-                    fill
-                    className="object-cover opacity-75 z-10"
-                    priority
-                  />
-                  <div className="absolute top-12 left-6 bg-gray-800  z-20 rounded-lg flex gap-6  shadow-lg p-2">
-                    <div
-                      className=""
-                      // style={{ height: "150px", aspectRatio: "2/3" }}
-                    >
-                      <Image
-                        alt={movie.title}
-                        src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
-                        className="object-cover rounded-md cursor-pointer"
-                        width={80}
-                        height={120}
-                        onClick={() => push(`/details/${movie.id}`)}
-                      />
-                    </div>
-                    <div className="w-[330px]">
-                      <div
-                        onClick={() => push(`/details/${movie.id}`)}
-                        className="font-semibold text-[1.5rem] cursor-pointer">
-                        {movie.title}
-                      </div>
-                      <div className="flex gap-4">
-                        <Rating movie={{ vote_average: movie.vote_average }} />
-                        <div> {movie.release_date} </div>
-                      </div>
+        <div className="relative h-[80vh] w-full bg-black text-white">
+          <div className="absolute bottom-10 left-12 z-10 text-[3rem] font-bold hidden sm:block">
+            Welcome to Magixx!
+            <br></br>
+            <span className="text-[2rem]">
+              Browse comprehensive movie information instantly.
+            </span>
+          </div>
+          <div ref={sliderRef} className="keen-slider">
+            {movieData &&
+              movieData.map((movie: Movie) => (
+                <div
+                  key={movie.id}
+                  className="keen-slider__slide flex justify-center bg-inherit">
+                  <div className="relative w-full h-[80vh]">
+                    <Image
+                      alt={movie.title}
+                      src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+                      fill
+                      className="object-cover opacity-75 z-10"
+                      priority
+                    />
 
-                      <div className=" box-border break-words overflow-hidden text-xs line-clamp-3">
-                        {movie.overview}
+                    <div className="absolute top-12 left-6 bg-gray-800  z-20 rounded-lg flex gap-6  shadow-lg p-2">
+                      <div>
+                        <Image
+                          alt={movie.title}
+                          src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+                          className="object-cover rounded-md cursor-pointer"
+                          width={80}
+                          height={120}
+                          onClick={() => push(`/details/${movie.id}`)}
+                        />
+                      </div>
+                      <div className="w-[330px]">
+                        <div
+                          onClick={() => push(`/details/${movie.id}`)}
+                          className="font-semibold text-[1.5rem] cursor-pointer">
+                          {movie.title}
+                        </div>
+                        <div className="flex gap-4">
+                          <Rating
+                            movie={{ vote_average: movie.vote_average }}
+                          />
+                          <div> {movie.release_date} </div>
+                        </div>
+
+                        <div className=" box-border break-words overflow-hidden text-xs line-clamp-3">
+                          {movie.overview}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+          </div>
         </div>
         {loaded && instanceRef.current && (
           <>

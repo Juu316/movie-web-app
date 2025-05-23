@@ -15,7 +15,19 @@ export interface Movie {
   video: boolean;
   runtime: number;
   genres: Genre[];
+  spoken_languages: Languages[];
+  production_countries: Countries[];
+  media_type: string;
 }
+export type Countries = {
+  name: string;
+  iso_3166_1: string;
+};
+export type Languages = {
+  english_name: string;
+  iso_639_1: string;
+  name: string;
+};
 export type Trailer = {
   id: string;
   key: string;
@@ -47,7 +59,6 @@ export interface MovieDetails extends Movie {
   imdb_id: string | null;
 }
 
-// Interface for movie credits
 export interface MovieCredits {
   id: number;
   cast: CastMember[];
