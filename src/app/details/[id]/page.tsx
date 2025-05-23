@@ -31,6 +31,7 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [cast, setCast] = useState<{ name: string }[]>([]);
   const [crew, setCrew] = useState<{ job: string; name: string }[]>([]);
+  const [videoKey, setVideoKey] = useState<string | null>(null);
   useEffect(() => {
     const fetchCredits = async () => {
       try {
@@ -45,7 +46,6 @@ const Page = () => {
         );
         setCast(res.data.cast);
         setCrew(res.data.crew);
-        
       } catch (error) {
         console.log(error);
       }
@@ -62,6 +62,11 @@ const Page = () => {
             },
           }
         );
+        const trailerr = res.data.results.find(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (vid: any) => vid.site === "YouTube" && vid.type === "Trailer"
+        );
+        if (trailerr) setVideoKey(trailerr.key);
         setTrailer(res.data.results);
         setLoading(false);
       } catch (error) {
@@ -83,6 +88,7 @@ const Page = () => {
         );
         setMovie(res.data);
         setLoading(false);
+        console.log(res.data);
       } catch (error) {
         console.error(error);
       }
@@ -114,12 +120,12 @@ const Page = () => {
   const trailerLink = trailer.find(
     (vid: Trailer) => vid.site === "YouTube" && vid.type === "Trailer"
   );
-
+  if (!videoKey) return <p>Loading trailer...</p>;
   return (
     <>
       <div className="  bg-gray-900 text-white mt-[59px] px-6 py-10 ">
         <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row gap-10">
-          <div className="flex-shrink-0 mx-auto lg:mx-0">
+          <div className="flex-shrink-0 mx-auto lg:mx-0 flex flex-col items-center">
             <Image
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title}
@@ -127,6 +133,19 @@ const Page = () => {
               height={450}
               className="rounded-2xl shadow-lg"
             />
+            <div className="mt-6">
+              {trailerLink ? (
+                <a
+                  href={`https://www.youtube.com/watch?v=${trailerLink.key}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-5 py-3 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition">
+                  ▶ Watch Trailer On Youtube
+                </a>
+              ) : (
+                <p className="text-gray-400">No trailer available</p>
+              )}
+            </div>
           </div>
 
           <div className="flex-1 space-y-4">
@@ -185,26 +204,36 @@ const Page = () => {
             </div>
 
             {movie.vote_average !== undefined && (
-              <div className="mt-2">
-                <p className="text-sm text-gray-400 mt-1">
-                  TMDB Rating: {movie.vote_average.toFixed(1)}
-                </p>
+              <div className="mt-2 flex items-center gap-6 text-xl">
+                <div className="flex  items-center gap-1">
+                  TMDB:
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="#fde047"
+                    stroke="#fde047"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-star ">
+                    <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
+                  </svg>
+                  {movie.vote_average.toFixed(1)}
+                </div>
+                <div>Votes: {movie.vote_count}</div>
               </div>
             )}
-
-            <div className="mt-6">
-              {trailerLink ? (
-                <a
-                  href={`https://www.youtube.com/watch?v=${trailerLink.key}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block px-5 py-3 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition">
-                  ▶ Watch Trailer
-                </a>
-              ) : (
-                <p className="text-gray-400">No trailer available</p>
-              )}
-            </div>
+            <iframe
+              width="100%"
+              height="500"
+              src={`https://www.youtube.com/embed/${videoKey}`}
+              title="Movie Trailer"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
         </div>
       </div>
