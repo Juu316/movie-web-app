@@ -21,19 +21,15 @@ const Header = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch suggestions as user types
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearch(value);
-
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
-
     if (value.trim().length === 0) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
     }
-
     searchTimeout.current = setTimeout(async () => {
       try {
         const res = await axios.get(
@@ -46,16 +42,15 @@ const Header = () => {
             },
           }
         );
-        setSuggestions(res.data.results.slice(0, 6)); // Show top 6
+        setSuggestions(res.data.results.slice(0, 6));
         setShowSuggestions(true);
       } catch {
         setSuggestions([]);
         setShowSuggestions(false);
       }
-    }, 300); // debounce
+    }, 300);
   };
 
-  // Hide suggestions on click outside
   const searchRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -156,7 +151,7 @@ const Header = () => {
                     );
                   })}
                 </div>
-                {/* Apply button to trigger search with selected genres */}
+              
                 <div className="mt-4 flex justify-end">
                   <Button
                     variant="outline"

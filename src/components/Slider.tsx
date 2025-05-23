@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useKeenSlider } from "keen-slider/react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Rating from "./ui/Rating";
+import Rating from "./ui/rating";
 import { Movie } from "@/types/Movie";
 
 interface ArrowProps {

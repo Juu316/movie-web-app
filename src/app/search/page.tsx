@@ -47,18 +47,9 @@ const SearchMovies = () => {
     }
   };
 
-  // const handleSearch = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setPage(1);
-  //   if (searchValue.trim()) {
-  //     fetchMovies(searchValue, 1);
-  //   }
-  // };
-
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
-      // Fetch movies for the new page
       fetchMovies(urlQuery, newPage);
     }
   };
@@ -87,21 +78,6 @@ const SearchMovies = () => {
   }, [urlQuery]);
   return (
     <div className="mt-[59px] p-4">
-      {/* <form onSubmit={handleSearch} className="mb-4">
-        <input
-          type="text"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          placeholder="Search movies..."
-          className="px-4 py-2 w-full border rounded"
-        />
-        <button
-          type="submit"
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
-          Search
-        </button>
-      </form> */}
-
       <MovieList
         title={`Search results for: ${urlQuery}`}
         movies={movies}

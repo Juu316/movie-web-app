@@ -45,7 +45,7 @@ const Page = () => {
         );
         setCast(res.data.cast);
         setCrew(res.data.crew);
-        console.log("Credits:", res.data.crew, res.data.cast);
+        
       } catch (error) {
         console.log(error);
       }

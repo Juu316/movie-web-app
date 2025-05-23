@@ -24,7 +24,6 @@ const Category = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Get current page from the URL params
   useEffect(() => {
     const page = searchParams.get("page");
     if (page) {
@@ -33,8 +32,6 @@ const Category = () => {
       setCurrentPage(1);
     }
   }, [searchParams]);
-
-  // Fetch movies for given page
   const fetchCategory = async (page: number) => {
     try {
       setLoading(true);
@@ -64,31 +61,24 @@ const Category = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, token, currentPage]);
 
-  // Update the URL when the page changes
   const handlePageChange = (page: number) => {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("page", page.toString());
     router.push(`/category/${category}?${newParams.toString()}`);
   };
 
-  // Build pagination range: always show first, current, page before and page after (if available)
   const getPaginationRange = () => {
     const pages: number[] = [];
-    // Always show the first page
     pages.push(1);
-    // Add the page before current if it exists and is not already 1
     if (currentPage - 1 > 1) {
       pages.push(currentPage - 1);
     }
-    // Add current page if it's not already the first page
     if (currentPage !== 1) {
       pages.push(currentPage);
     }
-    // Add the page after current if it exists
     if (currentPage + 1 <= totalPages) {
       pages.push(currentPage + 1);
     }
-    // Remove duplicates and sort
     return Array.from(new Set(pages)).sort((a, b) => a - b);
   };
 
