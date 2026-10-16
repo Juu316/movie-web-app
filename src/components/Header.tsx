@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useEffectEvent, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -12,13 +12,12 @@ import type { Genre, MediaItem } from "@/types/media";
 
 /** Close a popup when the user clicks outside it or presses Escape. */
 function useDismiss(ref: React.RefObject<HTMLElement | null>, onDismiss: () => void) {
-  const callback = useRef(onDismiss);
-  callback.current = onDismiss;
+  const dismiss = useEffectEvent(onDismiss);
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) callback.current();
+      if (ref.current && !ref.current.contains(e.target as Node)) dismiss();
     };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && callback.current();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && dismiss();
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -38,10 +37,7 @@ function SearchBox({ className, autoFocus }: { className?: string; autoFocus?: b
 
   useEffect(() => {
     const query = search.trim();
-    if (!query) {
-      setSuggestions([]);
-      return;
-    }
+    if (!query) return;
     const controller = new AbortController();
     const timeout = setTimeout(async () => {
       try {
@@ -80,7 +76,10 @@ function SearchBox({ className, autoFocus }: { className?: string; autoFocus?: b
           placeholder="Search movies, series, anime..."
           value={search}
           autoFocus={autoFocus}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            if (!e.target.value.trim()) setSuggestions([]);
+          }}
           onFocus={() => suggestions.length && setOpen(true)}
         />
       </form>
@@ -193,9 +192,9 @@ const NAV = [
 
 export default function Header({ genres }: { genres: Genre[] }) {
   const pathname = usePathname();
-  const [mobileSearch, setMobileSearch] = useState(false);
-
-  useEffect(() => setMobileSearch(false), [pathname]);
+  // Remember the path the mobile search was opened on, so it closes on navigation.
+  const [mobileSearchPath, setMobileSearchPath] = useState<string | null>(null);
+  const mobileSearch = mobileSearchPath === pathname;
 
   return (
     <header className="fixed top-0 inset-x-0 z-40 border-b bg-background/90 backdrop-blur">
@@ -232,7 +231,7 @@ export default function Header({ genres }: { genres: Genre[] }) {
             className="h-9 w-9 p-0 md:hidden"
             aria-label={mobileSearch ? "Close search" : "Open search"}
             aria-expanded={mobileSearch}
-            onClick={() => setMobileSearch((p) => !p)}>
+            onClick={() => setMobileSearchPath(mobileSearch ? null : pathname)}>
             {mobileSearch ? <X /> : <Search />}
           </Button>
           <ThemeToggle />

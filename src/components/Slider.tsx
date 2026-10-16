@@ -66,7 +66,7 @@ export default function Slider({ items }: { items: MediaItem[] }) {
         ))}
       </div>
 
-      {loaded && instanceRef.current && (
+      {loaded && (
         <>
           <button className={cn(arrowClass, "left-3")} aria-label="Previous slide" onClick={() => instanceRef.current?.prev()}>
             <ChevronLeft className="size-6" />
