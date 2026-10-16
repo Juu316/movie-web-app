@@ -4,28 +4,27 @@
 
 @layer base {
   :root {
-    /* Movie app custom palette */
-    --background: 222 47% 11%; /* deep blue-gray */
-    --foreground: 0 0% 98%; /* white */
-    --card: 222 47% 15%; /* slightly lighter for cards */
-    --card-foreground: 0 0% 98%;
-    --popover: 222 47% 18%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 48 100% 50%; /* gold/yellow for highlights */
-    --primary-foreground: 222 47% 11%;
-    --secondary: 222 20% 20%; /* dark slate for secondary UI */
-    --secondary-foreground: 0 0% 98%;
-    --muted: 222 20% 25%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 348 83% 47%; /* red accent for ratings, etc */
+    /* Light theme */
+    --background: 220 20% 97%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 40 96% 40%; /* darker gold so text stays readable on light bg */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 16% 91%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 16% 91%;
+    --muted-foreground: 220 9% 40%;
+    --accent: 348 83% 47%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 222 20% 25%;
-    --input: 222 20% 25%;
-    --ring: 48 100% 50%;
+    --border: 220 13% 85%;
+    --input: 220 13% 85%;
+    --ring: 40 96% 40%;
     --radius: 0.75rem;
-    /* Chart colors can stay or be themed as needed */
     --chart-1: 48 100% 50%;
     --chart-2: 348 83% 47%;
     --chart-3: 222 47% 30%;
@@ -68,128 +67,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-[class^="number-slide"],
-[class*=" number-slide"] {
-  background: grey;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 50px;
-  color: #fff;
-  font-weight: 500;
-  height: auto;
-  max-height: 100vh;
-}
-
-.number-slide1 {
-  background: rgb(64, 175, 255);
-  background: linear-gradient(
-    128deg,
-    rgba(64, 175, 255, 1) 0%,
-    rgba(63, 97, 255, 1) 100%
-  );
-}
-
-.number-slide2 {
-  background: rgb(255, 75, 64);
-  background: linear-gradient(
-    128deg,
-    rgba(255, 154, 63, 1) 0%,
-    rgba(255, 75, 64, 1) 100%
-  );
-}
-
-.number-slide3 {
-  background: rgb(182, 255, 64);
-  background: linear-gradient(
-    128deg,
-    rgba(182, 255, 64, 1) 0%,
-    rgba(63, 255, 71, 1) 100%
-  );
-  background: linear-gradient(
-    128deg,
-    rgba(189, 255, 83, 1) 0%,
-    rgba(43, 250, 82, 1) 100%
-  );
-}
-
-.number-slide4 {
-  background: rgb(64, 255, 242);
-  background: linear-gradient(
-    128deg,
-    rgba(64, 255, 242, 1) 0%,
-    rgba(63, 188, 255, 1) 100%
-  );
-}
-
-.number-slide5 {
-  background: rgb(255, 64, 156);
-  background: linear-gradient(
-    128deg,
-    rgba(255, 64, 156, 1) 0%,
-    rgba(255, 63, 63, 1) 100%
-  );
-}
-
-.number-slide6 {
-  background: rgb(64, 76, 255);
-  background: linear-gradient(
-    128deg,
-    rgba(64, 76, 255, 1) 0%,
-    rgba(174, 63, 255, 1) 100%
-  );
-}
-
-.navigation-wrapper {
-  position: relative;
-}
-
-.dots {
-  display: flex;
-  padding: 10px 0;
-  justify-content: center;
-}
-
-.dot {
-  border: none;
-  width: 10px;
-  height: 10px;
-  background: #c5c5c5;
-  border-radius: 50%;
-  margin: 0 5px;
-  padding: 5px;
-  cursor: pointer;
-}
-
-.dot:focus {
-  outline: none;
-}
-
-.dot.active {
-  background: #000;
-}
-
-.arrow {
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  -webkit-transform: translateY(-50%);
-  fill: #fff;
-  cursor: pointer;
-}
-
-.arrow--left {
-  left: 5px;
-}
-
-.arrow--right {
-  left: auto;
-  right: 5px;
-}
-
-.arrow--disabled {
-  fill: rgba(255, 255, 255, 0.5);
 }

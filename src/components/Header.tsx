@@ -1,261 +1,248 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import { Film, Search, Sun, Moon, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
-import Link from "next/link";
-import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
-import { Movie } from "@/types/Movie";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-const Header = () => {
-  const { push } = useRouter();
-  const token = process.env.TMDB_API_TOKEN;
-  const { setTheme, theme } = useTheme();
-  const [search, setSearch] = useState("");
-  const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
-  const [showGenres, setShowGenres] = useState(false);
-  const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
-  const genreRef = useRef<HTMLDivElement>(null);
-  const [suggestions, setSuggestions] = useState<Movie[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { ChevronDown, Film, Moon, Search, Sun, X } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { tmdbImage } from "@/lib/image";
+import { cn } from "@/lib/utils";
+import type { Genre, MediaItem } from "@/types/media";
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setSearch(value);
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    if (value.trim().length === 0) {
+/** Close a popup when the user clicks outside it or presses Escape. */
+function useDismiss(ref: React.RefObject<HTMLElement | null>, onDismiss: () => void) {
+  const callback = useRef(onDismiss);
+  callback.current = onDismiss;
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) callback.current();
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && callback.current();
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [ref]);
+}
+
+function SearchBox({ className, autoFocus }: { className?: string; autoFocus?: boolean }) {
+  const { push } = useRouter();
+  const [search, setSearch] = useState("");
+  const [suggestions, setSuggestions] = useState<MediaItem[]>([]);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useDismiss(ref, () => setOpen(false));
+
+  useEffect(() => {
+    const query = search.trim();
+    if (!query) {
       setSuggestions([]);
-      setShowSuggestions(false);
       return;
     }
-    searchTimeout.current = setTimeout(async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(async () => {
       try {
-        const res = await axios.get(
-          "https://api.themoviedb.org/3/search/movie",
-          {
-            params: { query: value, language: "en-US", page: 1 },
-            headers: {
-              accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setSuggestions(res.data.results.slice(0, 6));
-        setShowSuggestions(true);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, { signal: controller.signal });
+        const data: { results: MediaItem[] } = await res.json();
+        setSuggestions(data.results);
+        setOpen(true);
       } catch {
-        setSuggestions([]);
-        setShowSuggestions(false);
+        // Aborted by a newer keystroke, or network error: keep old suggestions.
       }
     }, 300);
-  };
-
-  const searchRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target as Node)
-      ) {
-        setShowSuggestions(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        genreRef.current &&
-        !genreRef.current.contains(event.target as Node)
-      ) {
-        setShowGenres(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      clearTimeout(timeout);
+      controller.abort();
     };
-  }, []);
+  }, [search]);
 
-  const fetchGenres = async () => {
-    try {
-      const res = await axios.get(
-        "https://api.themoviedb.org/3/genre/movie/list?language=en",
-        {
-          headers: {
-            accept: "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setGenres(res.data.genres || []);
-    } catch (error) {
-      console.error(error);
-    }
+  const go = (href: string) => {
+    setOpen(false);
+    push(href);
   };
 
-  useEffect(() => {
-    fetchGenres();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const toggleGenre = (id: number) => {
-    setSelectedGenres((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
-  const applyGenreSelection = () => {
-    if (selectedGenres.length) {
-      push(`/genre/${selectedGenres.join(",")}`);
-      setShowGenres(false);
-    }
-  };
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (search.trim()) {
-      push(`/search?query=${encodeURIComponent(search)}`);
-    }
-  };
   return (
-    <header className="fixed top-0 inset-x-0 z-20 h-[59px] flex items-center justify-center bg-background">
-      <div className="flex items-center justify-between w-full px-5">
-        <Link className="flex items-center gap-x-2 text-indigo-700" href="/">
-          <Film width={20} height={20} />
-          <h4 className="italic font-bold">Magixx</h4>
-        </Link>
-        <div className="relative flex items-center gap-x-3">
-          <div className="relative" ref={genreRef}>
-            <Button
-              className="h-9"
-              variant="outline"
-              onClick={() => setShowGenres((prev) => !prev)}>
-              <ChevronDown className="mr-2" />
-              Genre
-            </Button>
-            {showGenres && (
-              <div className="absolute left-0 mt-2 w-[480px] bg-card border border-border rounded-lg shadow-lg z-30 p-4">
-                <div className="grid grid-cols-3 gap-2">
-                  {genres.map((genre) => {
-                    const isSelected = selectedGenres.includes(genre.id);
-                    return (
-                      <Button
-                        key={genre.id}
-                        variant={isSelected ? "secondary" : "ghost"}
-                        className="w-full justify-start hover:bg-secondary transition-colors"
-                        onClick={() => toggleGenre(genre.id)}>
-                        {genre.name}
-                      </Button>
-                    );
-                  })}
-                </div>
-              
-                <div className="mt-4 flex justify-end">
-                  <Button
-                    variant="outline"
-                    onClick={applyGenreSelection}
-                    disabled={selectedGenres.length === 0}>
-                    Apply
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-          <div
-            className="relative hidden sm:block text-muted-foreground w-[379px]"
-            ref={searchRef}>
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2"
-              width={16}
-              height={16}
-            />
-            <form onSubmit={handleSearchSubmit}>
-              <input
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-[38px]"
-                placeholder="Search..."
-                value={search}
-                onChange={handleSearch}
-                onFocus={() => search && setShowSuggestions(true)}
+    <div className={cn("relative text-muted-foreground", className)} ref={ref}>
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4" />
+      <form
+        role="search"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (search.trim()) go(`/search?query=${encodeURIComponent(search.trim())}`);
+        }}>
+        <input
+          type="search"
+          aria-label="Search movies and series"
+          className="flex h-9 w-full rounded-md border border-input bg-transparent pl-9 pr-3 py-1 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          placeholder="Search movies, series, anime..."
+          value={search}
+          autoFocus={autoFocus}
+          onChange={(e) => setSearch(e.target.value)}
+          onFocus={() => suggestions.length && setOpen(true)}
+        />
+      </form>
+      {open && search.trim() && (
+        <div className="absolute left-0 right-0 mt-2 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg z-50">
+          {suggestions.length === 0 && <p className="px-4 py-3 text-sm text-muted-foreground">No results</p>}
+          {suggestions.map((item) => (
+            <Link
+              key={`${item.type}-${item.id}`}
+              href={`/details/${item.type}/${item.id}`}
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3 px-4 py-2 hover:bg-secondary focus-visible:bg-secondary focus-visible:outline-none">
+              <Image
+                src={tmdbImage(item.poster, "w92")}
+                alt=""
+                width={40}
+                height={56}
+                className="h-14 w-10 shrink-0 rounded object-cover"
               />
-            </form>
-            {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 mt-2 bg-gray-600 shadow-lg rounded z-50  overflow-y-auto">
-                {suggestions.map((movie) => (
-                  <div
-                    key={movie.id}
-                    className="flex items-center gap-3 px-4 py-2 hover:bg-gray-500 cursor-pointer"
-                    onClick={() => {
-                      setShowSuggestions(false);
-                      push(`/details/${movie.id}`);
-                    }}>
-                    <Image
-                      src={
-                        movie.poster_path
-                          ? `https://image.tmdb.org/t/p/w92${movie.poster_path}`
-                          : "/placeholder.jpg"
-                      }
-                      alt={movie.title}
-                      width={40}
-                      height={56}
-                      className="w-10 h-14 object-cover rounded"
-                      unoptimized={movie.poster_path ? false : true}
-                    />
-                    <div>
-                      <div className="font-medium text-gray-100">
-                        {movie.title}
-                      </div>
-                      <div className="text-xs text-gray-300">
-                        {movie.release_date
-                          ? movie.release_date.slice(0, 4)
-                          : ""}
-                        {movie.media_type === "tv" && " • TV"}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <div
-                  className="px-4 py-2 text-center text-green-600 font-semibold cursor-pointer hover:bg-gray-100"
-                  onClick={() => {
-                    setShowSuggestions(false);
-                    push(`/search?query=${encodeURIComponent(search)}`);
-                  }}>
-                  View all results
+              <div className="min-w-0">
+                <div className="truncate font-medium">{item.title}</div>
+                <div className="text-xs text-muted-foreground">
+                  {item.date.slice(0, 4)}
+                  {item.type === "tv" && " • TV"}
                 </div>
               </div>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-x-3">
-          <div className="sm:hidden">
-            <Button variant="outline" className="w-9 h-9">
-              <Search />
-            </Button>
-          </div>
-          {theme === "dark" ? (
-            <Button
-              variant="outline"
-              className="w-9 h-9"
-              onClick={() => {
-                setTheme("light");
-              }}>
-              <Sun />
-            </Button>
-          ) : (
-            <Button
-              variant="outline"
-              className="h-9 w-9"
-              onClick={() => {
-                setTheme("dark");
-              }}>
-              <Moon />
-            </Button>
+            </Link>
+          ))}
+          {suggestions.length > 0 && (
+            <button
+              className="w-full px-4 py-2 text-center text-sm font-semibold text-primary hover:bg-secondary"
+              onClick={() => go(`/search?query=${encodeURIComponent(search.trim())}`)}>
+              View all results
+            </button>
           )}
         </div>
+      )}
+    </div>
+  );
+}
+
+function GenrePicker({ genres }: { genres: Genre[] }) {
+  const { push } = useRouter();
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<number[]>([]);
+  const ref = useRef<HTMLDivElement>(null);
+  useDismiss(ref, () => setOpen(false));
+
+  const toggle = (id: number) =>
+    setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  return (
+    <div className="relative" ref={ref}>
+      <Button className="h-9 px-3" variant="outline" aria-expanded={open} onClick={() => setOpen((p) => !p)}>
+        Genre
+        <ChevronDown className={cn("transition-transform", open && "rotate-180")} />
+      </Button>
+      {open && (
+        <div className="absolute left-0 mt-2 w-[min(480px,calc(100vw-2rem))] rounded-lg border bg-popover p-4 shadow-lg z-30">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+            {genres.map((genre) => (
+              <Button
+                key={genre.id}
+                variant={selected.includes(genre.id) ? "secondary" : "ghost"}
+                aria-pressed={selected.includes(genre.id)}
+                className="h-9 w-full justify-start"
+                onClick={() => toggle(genre.id)}>
+                {genre.name}
+              </Button>
+            ))}
+          </div>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setSelected([])} disabled={selected.length === 0}>
+              Clear
+            </Button>
+            <Button
+              disabled={selected.length === 0}
+              onClick={() => {
+                setOpen(false);
+                push(`/genre/${selected.join(",")}`);
+              }}>
+              Apply
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme();
+  return (
+    <Button
+      variant="outline"
+      className="h-9 w-9 p-0"
+      aria-label="Toggle theme"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}>
+      {/* CSS picks the icon, so no flash before the theme is known on the client. */}
+      <Sun className="hidden dark:block" />
+      <Moon className="dark:hidden" />
+    </Button>
+  );
+}
+
+const NAV = [
+  { href: "/", label: "Movies" },
+  { href: "/anime", label: "Anime" },
+];
+
+export default function Header({ genres }: { genres: Genre[] }) {
+  const pathname = usePathname();
+  const [mobileSearch, setMobileSearch] = useState(false);
+
+  useEffect(() => setMobileSearch(false), [pathname]);
+
+  return (
+    <header className="fixed top-0 inset-x-0 z-40 border-b bg-background/90 backdrop-blur">
+      <div className="mx-auto flex h-[58px] max-w-screen-2xl items-center justify-between gap-3 px-4">
+        <Link className="flex items-center gap-x-2 text-primary" href="/">
+          <Film className="size-5" />
+          <span className="italic font-bold">Magixx</span>
+        </Link>
+
+        <nav className="flex items-center gap-1 sm:gap-2">
+          {NAV.map((item) => {
+            const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  buttonVariants({ variant: active ? "secondary" : "ghost", size: "sm" }),
+                  "px-2 sm:px-3",
+                  item.href === "/" && "hidden sm:inline-flex"
+                )}>
+                {item.label}
+              </Link>
+            );
+          })}
+          <GenrePicker genres={genres} />
+          <SearchBox className="hidden md:block w-[340px] ml-2" />
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="h-9 w-9 p-0 md:hidden"
+            aria-label={mobileSearch ? "Close search" : "Open search"}
+            aria-expanded={mobileSearch}
+            onClick={() => setMobileSearch((p) => !p)}>
+            {mobileSearch ? <X /> : <Search />}
+          </Button>
+          <ThemeToggle />
+        </div>
       </div>
+      {mobileSearch && (
+        <div className="border-t bg-background px-4 py-2 md:hidden">
+          <SearchBox autoFocus />
+        </div>
+      )}
     </header>
   );
-};
-
-export default Header;
+}

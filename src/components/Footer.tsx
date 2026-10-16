@@ -1,40 +1,43 @@
-import React from "react";
-import { Film, Mail } from "lucide-react";
+import { Film } from "lucide-react";
 import Link from "next/link";
+
 const Footer = () => {
   return (
-    <footer className="w-full bg-indigo-700 py-10 px-5 text-sm text-[#fafafa]">
-      <div className="mx-auto flex flex-col justify-between gap-y-7 md:flex-row max-w-screen-xl">
+    <footer className="mt-12 w-full border-t bg-secondary py-10 px-5 text-sm text-secondary-foreground">
+      <div className="mx-auto flex max-w-screen-xl flex-col justify-between gap-y-7 md:flex-row">
         <div className="space-y-3">
-          <Link className="flex items-center gap-x-2" href="/">
-            <Film width={20} height={20} />
-            <h4 className="italic font-bold">Magixx</h4>
+          <Link className="flex items-center gap-x-2 text-primary" href="/">
+            <Film className="size-5" />
+            <span className="italic font-bold">Magixx</span>
           </Link>
-          <p>© 2025 Magixx. All Rights Reserved.</p>
+          <p>© {new Date().getFullYear()} Magixx. All Rights Reserved.</p>
+          <p className="max-w-sm text-xs text-muted-foreground">
+            This product uses the TMDB API but is not endorsed or certified by{" "}
+            <a href="https://www.themoviedb.org" className="underline" target="_blank" rel="noopener noreferrer">
+              TMDB
+            </a>
+            .
+          </p>
         </div>
 
         <div className="flex gap-x-12 lg:gap-x-24">
           <div className="space-y-3">
-            <h4>Contact Information</h4>
-            <div className="space-y-6">
-              <div className="flex items-center gap-x-3">
-                <Mail width={16} height={16} />
-                <div>
-                  <h5 className="font-medium">Email</h5>
-                  <p>uujuu316@gmail.com</p>
-                </div>
-              </div>
-            </div>
+            <h4 className="font-semibold">Browse</h4>
+            <ul className="space-y-2">
+              <li><Link href="/category/popular" className="hover:underline">Popular movies</Link></li>
+              <li><Link href="/category/top_rated" className="hover:underline">Top rated movies</Link></li>
+              <li><Link href="/anime" className="hover:underline">Anime</Link></li>
+            </ul>
           </div>
           <div className="space-y-3">
-            <h4>Follow us</h4>
-            <div className="flex flex-col gap-3 lg:flex-row">
-              <Link
-                href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
-                className="font-medium">
-                Youtube
-              </Link>
-            </div>
+            <h4 className="font-semibold">Follow us</h4>
+            <a
+              href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium hover:underline">
+              Youtube
+            </a>
           </div>
         </div>
       </div>

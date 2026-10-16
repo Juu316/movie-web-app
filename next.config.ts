@@ -1,30 +1,17 @@
 import type { NextConfig } from "next";
 
+// TMDB_API_TOKEN is read only on the server (src/lib/tmdb.ts). Do not add it to `env`:
+// that inlines the value into the client JavaScript bundle.
 const nextConfig: NextConfig = {
-  env:{
-    TMDB_BASE_URL: process.env.TMDB_BASE_URL ||"",
-    TMDB_API_TOKEN: process.env.TMDB_API_TOKEN ||"",
-    TMDB_IMAGE_SERVICE_URL: process.env.TMDB_IMAGE_SERVICE_URL ||"",
-  },
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "image.tmdb.org",
-        port: "",
-        pathname: "/t/p/**", // Allow all paths under /t/p/
+        pathname: "/t/p/**",
       },
     ],
   },
 };
 
 export default nextConfig;
-
-
-
-
-
-
-
-
-
